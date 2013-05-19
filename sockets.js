@@ -24,7 +24,7 @@ module.exports.listen = function(app){
               socket.broadcast.emit("game", res )
           }
         })
-        cb(uuid)
+        cb(game.getPlayer(uuid));
       })
 
       // User leaves
