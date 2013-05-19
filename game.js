@@ -7,7 +7,7 @@ var EventEmitter = require('events').EventEmitter;
 exports.eventEmitter = new EventEmitter();
 
 var prepTime = 5 * 1000;
-var roundTime = 5 * 1000;
+var roundTime = 15 * 1000;
 
 var game = {
     title:null
@@ -39,7 +39,7 @@ var init = function(cb){
         if(err) throw err;
 
         var dataArray = data.toString().split("\n");
-        title = dataArray[0];
+        game.title = dataArray[0];
         answers = dataArray.splice(1);
         game.count = answers.length
 
@@ -48,7 +48,7 @@ var init = function(cb){
             names = _.shuffle(data.toString().split("\n"));
 
             newRound(function(){
-                console.log("Game initalized")
+                console.log("Game initalized", game)
             })
         });
     });
