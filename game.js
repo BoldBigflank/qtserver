@@ -60,14 +60,15 @@ newRound = function(cb){
         var winningPlayer = _.max(game.players, function(player){
             return player.answers.length
         })
-
-        var winner = {
-            name: winningPlayer.name
-            , title: game.title
-            , score: winningPlayer.answered.length
-            , id: winningPlayer.id
+        if(winningPlayer){
+            var winner = {
+                name: winningPlayer.name
+                , title: game.title
+                , score: winningPlayer.answered.length
+                , id: winningPlayer.id
+            }
+            game.winner = winner
         }
-        game.winner = winner
     }
     // Remove the current entries from the players
     for(var index in game.players){
