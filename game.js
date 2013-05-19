@@ -16,6 +16,7 @@ var game = {
     , players:[]
     , begin:null
     , end:null
+    , now:null
     , winner:{}
     , count:null
 } // prep, active, ended
@@ -113,6 +114,7 @@ exports.join = function(uuid, cb){
         cb("UUID not found")
         return
     }
+    game.now = new Date().getTime()
     var player = _.find(game.players, function(player){ return player.id == uuid })
     if( typeof player === 'undefined'){
         var player = {
@@ -175,8 +177,7 @@ exports.setState = function(state, cb){
 
     // entry, vote, result
     game.state = state
-
-    console.log("setState", game)
+    game.now = new Date().getTime()
     if(state=="prep"){ // New round
         game.help = "Be prepared to list answers that fit the following category."
         newRound(function(){

@@ -44,7 +44,7 @@ module.exports.listen = function(app){
       })
 
       // Answer
-      socket.on('answer', function(answer, cb){
+      socket.on('answer', function(answer){
         // add the entry
         socket.get('uuid', function(err, uuid){
           game.addAnswer(uuid, answer, function(err, res){
@@ -59,7 +59,9 @@ module.exports.listen = function(app){
       socket.on('state', function(data){
           game.setState(data, function(err, res){
             if (err) { socket.emit("alert", err) }
-            else{ io.sockets.emit("game", res ) }
+            else{ 
+                io.sockets.emit("game", res )
+            }
           })  
       })
 
