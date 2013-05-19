@@ -4,7 +4,8 @@
  */
 
 var express = require('express')
-  , routes = require('./routes');
+  , routes = require('./routes')
+  , fs = require('fs');
 
 var app = module.exports = express.createServer();
 var io = require('./sockets').listen(app);
@@ -31,9 +32,16 @@ app.configure('production', function(){
 
 // Routes
 
-app.get('*',function(req,res){  
-    res.redirect('http://dev.bold-it.com/quiztime'+req.url)
-})
+// app.get('*',function(req,res){  
+//     res.redirect('http://dev.bold-it.com/quiztime'+req.url)
+// })
+  app.get('/', function(req, res){
+    fs.readFile('public/index.html', function(err, page) {
+            res.writeHead(200, {'Content-Type': 'text/html'});
+            res.write(page);
+            res.end();
+        });
+  })
 
 var port = process.env.PORT || 3000
 app.listen(port, function(){
