@@ -31,7 +31,7 @@ app.configure('production', function(){
 
 // Routes
 
-http.get('*',function(req,res){  
+app.get('*',function(req,res){  
     res.redirect('http://dev.bold-it.com/quiztime'+req.url)
 })
 
