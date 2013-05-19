@@ -81,7 +81,7 @@ module.exports.listen = function(app){
       })
     });
 
-    game.on('state', function(res) {
+    game.eventEmitter.on('state', function(res) {
       io.sockets.emit("game", res )
     });
     return io

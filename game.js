@@ -4,7 +4,7 @@ var _ = require('underscore')
 
 var EventEmitter = require('events').EventEmitter;
 
-module.exports = new EventEmitter();
+exports.eventEmitter = new EventEmitter();
 
 var prepTime = 5 * 1000;
 var roundTime = 5 * 1000;
@@ -76,14 +76,14 @@ newRound = function(cb){
         console.log("timer 1 ended")
         setState('active', function(err, res){
             if(!err)
-                module.exports.emit('state', res)
+                exports.eventEmitter.emit('state', res)
         })
     }, prepTime);
     setTimeout(function(){
         console.log("timer 2 ended")
         setState('ended', function(err, res){
             if(!err)
-                module.exports.emit('state', res)
+                exports.eventEmitter.emit('state', res)
         })
     }, prepTime + roundTime);
     cb()
