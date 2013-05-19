@@ -73,6 +73,7 @@ newRound = function(cb){
     var files = fs.readdirSync('categories')
     files = _.difference(files, ['.', '..'])
     var path = files[Math.floor(Math.random()*files.length)]
+    path = 'chess.txt'
     var data = fs.readFileSync('categories/' + path)
     var dataArray = data.toString().split("\n");
         game.title = dataArray[0];
@@ -229,7 +230,7 @@ exports.addAnswer = function(id, guess, cb){
             game.players = _.sortBy(game.players, function(player){return -1 *  player.answers.length;});
 
             if(answers.length===game.answered.length) exports.setState('ended', function(err, res){
-                
+                exports.eventEmitter.emit('state', res)
             }) // End the game when all have been guessed
         }
 
