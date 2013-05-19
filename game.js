@@ -35,22 +35,23 @@ var init = function(cb){
         , count:null
     }
 
-    fs.readFile('categories/pokemon.txt', function(err, data) {
-        if(err) throw err;
 
-        var dataArray = data.toString().split("\n");
+    var files = fs.readdirSync('categories')
+    files = _.difference(files, ['.', '..'])
+    var path = files[Math.floor(Math.random()*files.length)]
+    var data = fs.readFileSync('categories/' + path)
+    var dataArray = data.toString().split("\n");
         game.title = dataArray[0];
         answers = dataArray.splice(1);
         game.count = answers.length
 
-        fs.readFile('names.txt', function(err, data) {
-            if(err) throw err;
-            names = _.shuffle(data.toString().split("\n"));
+    fs.readFile('names.txt', function(err, data) {
+        if(err) throw err;
+        names = _.shuffle(data.toString().split("\n"));
 
-            newRound(function(){
-                console.log("Game initalized", game)
-            })
-        });
+        newRound(function(){
+            console.log("Game initalized", game)
+        })
     });
 
 }
