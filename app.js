@@ -31,7 +31,9 @@ app.configure('production', function(){
 
 // Routes
 
-app.get('/', routes.index);
+http.get('*',function(req,res){  
+    res.redirect('http://dev.bold-it.com/quiztime'+req.url)
+})
 
 var port = process.env.PORT || 3000
 app.listen(port, function(){

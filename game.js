@@ -183,6 +183,7 @@ exports.setName = function(id, name, cb){
 }
 
 exports.setState = function(state, cb){
+    if(state==game.state) return cb("Already on this state")
     // Only start new rounds when the last is done
     if(game.state != "ended" && state == "prep") return cb("Only start new rounds when the last is done")
 
@@ -238,6 +239,8 @@ exports.addAnswer = function(id, guess, cb){
             var player = _.find(game.players, function(p){ return p.id ==  id; });
             player.answers.push(correctIndex)
             game.players = _.sortBy(game.players, function(player){return -1 *  player.answers.length;});
+
+            if(answers.length===game.answered.length) setState('ended') // End the game when all have been guessed
         }
 
     } else {
