@@ -55,6 +55,21 @@ var init = function(cb){
 }
 
 newRound = function(cb){
+    // Find the round's winner
+    if(game.players.length > 0){
+        var winner = {
+            name: winningPlayer.name
+            , title: game.title
+            , score: winningPlayer.answered.length
+            , id: winningPlayer.id
+        }
+        game.winner = winner
+    }
+
+    var winningPlayer = _.max(game.players, function(player){
+        return player.answered.length
+    })
+
     // Remove the current entries from the players
     for(var index in game.players){
         var player = game.players[index]
@@ -74,14 +89,14 @@ newRound = function(cb){
     game.state = "prep"; // DEBUG: Make prep first in prod
     setTimeout(function(){
         console.log("timer 1 ended")
-        setState('active', function(err, res){
+        exports.setState('active', function(err, res){
             if(!err)
                 exports.eventEmitter.emit('state', res)
         })
     }, prepTime);
     setTimeout(function(){
         console.log("timer 2 ended")
-        setState('ended', function(err, res){
+        exports.setState('ended', function(err, res){
             if(!err)
                 exports.eventEmitter.emit('state', res)
         })
@@ -152,7 +167,7 @@ exports.setName = function(id, name, cb){
     cb(null, { players: game.players })
 }
 
-function setState(state, cb){
+exports.setState = function(state, cb){
     // Only start new rounds when the last is done
     if(game.state != "ended" && state == "prep") return cb("Only start new rounds when the last is done")
 
@@ -161,14 +176,22 @@ function setState(state, cb){
 
     if(state=="prep"){ // New round
         game.help = "Be prepared to list answers that fit the following category."
+        newRound(function(){
+            cb(null, game)
+        });
     }
-    else if (state == "active")
+    else if (state == "active"){
         game.help = "List items that fit the category."
-    else if (state == "ended")
+        cb(null, game)
+    }
+    else if (state == "ended"){
         game.help = "The round has ended.  Click 'New Round' to begin."
-    else 
+        cb(null, game)
+    }
+    else{
         game.help = "";
-    cb(null, game)
+        cb(null, game)
+    }
 }
 
 exports.addAnswer = function(id, guess, cb){
@@ -211,24 +234,6 @@ exports.addAnswer = function(id, guess, cb){
 exports.reset = function(cb){
     init()
     cb(null, game)
-}
-
-// Not used
-exports.endRound = function(id, vote, cb){
-    // Set the winner
-    var winningPlayer = _.max(game.players, function(player){
-        return player.answered.length
-    })
-    var winner = {
-        name: winningPlayer.name
-        , title: game.title
-        , score: winningPlayer.answered.length
-        , id: winningPlayer.id
-    }
-    game.winner = winner
-    // Start new round
-    // newRound()
-    this.emit(null, {winner:winner})
 }
 
 init()

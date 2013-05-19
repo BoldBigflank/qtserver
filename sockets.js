@@ -30,11 +30,6 @@ module.exports.listen = function(app){
 
       // User leaves
       socket.on('disconnect', function(){
-        // Don't destroy data when people leave.  Besides, it is buggy
-        // socket.get('uuid', function(err, uuid){
-        //   if(typeof uuid !== 'undefined' ) game.leave(uuid)
-        // })
-        // io.sockets.emit("game", { czar:game.getCzar(), players: game.getPlayers() } )
         console.log("Disconnect: ", socket.id)
       })
       
@@ -62,7 +57,6 @@ module.exports.listen = function(app){
 
       // State
       socket.on('state', function(data){
-        // add the entry
         socket.get('uuid', function(err, uuid){
           game.setState(uuid, data, function(err, res){
             if (err) { socket.emit("alert", err) }
