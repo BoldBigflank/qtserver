@@ -212,17 +212,19 @@ exports.addAnswer = function(id, guess, cb){
             return;
         } else {
             // Add to answered array
+            var ts = (new Date().getTime()) - game.begin;
             var answerObject = {
                 index:correctIndex,
                 text:correctAnswer,
-                time: new Date().getTime() - game.begin
+                time: ts
             }
+            
             game.answered.push(answerObject);
 
             // Add to player's answers with timestamp
-            var player = _.find(game.players, function(p){ return p.uuid ==  id; });
+            var player = _.find(game.players, function(p){ return p.id ==  id; });
             player.answers.push(correctIndex)
-            game.players = _.sort(game.players, function(player){return -1 *  player.answered.length;});
+            game.players = _.sortBy(game.players, function(player){return -1 *  player.answers.length;});
         }
 
     } else {
