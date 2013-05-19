@@ -78,6 +78,16 @@ newRound = function(cb){
         game.players[index] = player
     }
 
+    // Load a new file
+    var files = fs.readdirSync('categories')
+    files = _.difference(files, ['.', '..'])
+    var path = files[Math.floor(Math.random()*files.length)]
+    var data = fs.readFileSync('categories/' + path)
+    var dataArray = data.toString().split("\n");
+        game.title = dataArray[0];
+        answers = dataArray.splice(1);
+        game.count = answers.length
+
     // Pick the beginning time
     var now = new Date().getTime(); // Milliseconds
     var begin = now + prepTime;
