@@ -61,7 +61,7 @@ module.exports.listen = function(app){
             if (err) { socket.emit("alert", err) }
             else{ 
                 io.sockets.emit("game", res )
-                if(state==='ended') io.sockets.emit('answers', game.getAnswers())
+                if(data==='ended') io.sockets.emit('answers', game.getAnswers())
             }
           })  
       })
