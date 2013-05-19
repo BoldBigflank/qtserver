@@ -135,7 +135,7 @@ exports.leave = function(id){
 
 }
 
-exports.getAnswers = function(){ return game.answers }
+exports.getAnswers = function(){ return answers }
 
 exports.getGame = function(){ return game }
 
