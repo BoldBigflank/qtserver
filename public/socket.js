@@ -21,12 +21,14 @@ var socket = io.connect('http://qtserver.herokuapp.com');
     });
 
     socket.on('game', function (data) {
-      // console.log('game', data);
+      //console.log('game', data);
       if(typeof data.title !== 'undefined'){
         if(typeof data.title === null){
-          data.title = 'Loading..';
+          data.title = 'Qu.izTi.me';
+        }else{
+          $('#question').html(data.title);
         }
-        $('#question').html(data.title);
+        
       }
 
       if(typeof data.players !== 'undefined'){
