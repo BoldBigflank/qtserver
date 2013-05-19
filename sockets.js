@@ -11,7 +11,7 @@ module.exports.listen = function(app){
     });
 
     io.sockets.on('connection', function (socket) {
-      socket.on('join', function(){
+      socket.on('join', function(cb){
 
         //Turn off persistence
         uuid = availableUUID++;
@@ -21,6 +21,7 @@ module.exports.listen = function(app){
           if (err) { socket.emit("alert", err) }
           else{ io.sockets.emit("game", res ) }
         })
+        cb(uuid)
       })
 
       // User leaves
@@ -43,11 +44,11 @@ module.exports.listen = function(app){
         })
       })
 
-      // Entry
-      socket.on('entry', function(entry, cb){
+      // Answer
+      socket.on('answer', function(answer, cb){
         // add the entry
         socket.get('uuid', function(err, uuid){
-          game.addEntry(uuid, entry, function(err, res){
+          game.addAnswer(uuid, answer, function(err, res){
             if (err) { socket.emit("alert", err) }
             else{ io.sockets.emit("game", res ) }
           })  
@@ -63,31 +64,6 @@ module.exports.listen = function(app){
             if (err) { socket.emit("alert", err) }
             else{ io.sockets.emit("game", res ) }
           })  
-        })
-      })
-
-      // Vote
-      socket.on('vote', function(data){
-        socket.get('uuid', function(err, uuid){
-          game.setVote(uuid, data, function(err, res){
-            if (err) { socket.emit("alert", err) }
-            else{ 
-              io.sockets.emit("game", res ) 
-            }
-          })  
-        })
-      })
-
-      socket.on('email', function(data){
-        var winner = game.getWinner
-        socket.get('uuid', function(err, uuid){
-          var message = "Greetings from Meta4,\n  "
-          var player = game.getPlayer(uuid) || {}
-          var winner = game.getWinner() || {}
-          if(player.id == winner.id)
-            message += player.name + " just won a round of Meta4.  To describe '" + winner.bcard + "', " + player.name + " used the card '" + winner.wcard + "'.  "
-          message += "Join " + player.name + " at http://meta4.herokuapp.com"
-          email.brag(data, player.name, message)
         })
       })
 
