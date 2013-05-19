@@ -39,7 +39,7 @@ var init = function(cb){
 
         var dataArray = data.toString().split("\n");
         title = dataArray[0];
-        answers = dataArray.splice(0,1);
+        answers = dataArray.splice(1);
         game.count = answers.length
 
         fs.readFile('names.txt', function(err, data) {
@@ -85,7 +85,9 @@ newRound = function(cb){
     var end = begin + roundTime;
     game.end = end;
 
-    game.answers = []
+    game.answered = []
+    // game.title = ""
+
     game.state = "prep"; // DEBUG: Make prep first in prod
     setTimeout(function(){
         console.log("timer 1 ended")
