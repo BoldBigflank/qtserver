@@ -64,7 +64,7 @@ newRound = function(cb){
             var winner = {
                 name: winningPlayer.name
                 , title: game.title
-                , score: winningPlayer.answered.length
+                , score: winningPlayer.answers.length
                 , id: winningPlayer.id
             }
             game.winner = winner
