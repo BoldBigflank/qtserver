@@ -58,7 +58,7 @@ module.exports.listen = function(app){
       // State
       socket.on('state', function(data){
         socket.get('uuid', function(err, uuid){
-          game.setState(uuid, data, function(err, res){
+          game.setState(data, function(err, res){
             if (err) { socket.emit("alert", err) }
             else{ io.sockets.emit("game", res ) }
           })  
