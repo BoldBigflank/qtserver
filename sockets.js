@@ -1,17 +1,16 @@
 var socketio = require('socket.io')
 var game = require('./game.js')
+var availableUUID = 1;
 
 module.exports.listen = function(app){
     io = socketio.listen(app)
 
     io.sockets.on('connection', function (socket) {
-      console.log("Connection", socket.id)
-      io.configure(function () { 
-        io.set("transports", ["xhr-polling"]); 
-        io.set("polling duration", 10); 
-      });
+      socket.on('join', function(){
 
-      socket.on('join', function(uuid){
+        //Turn off persistence
+        uuid = availableUUID++;
+
         socket.set('uuid', uuid)
         game.join(uuid, function(err, res){
           if (err) { socket.emit("alert", err) }

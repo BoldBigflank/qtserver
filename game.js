@@ -69,7 +69,7 @@ newRound = function(callback){
 // *** TODO: change the state and fire the event when the time is right ***
 
 exports.join = function(uuid, cb){
-    if(!uuid) {
+    if(uuid === undefined) {
         cb("UUID not found")
         return
     }
@@ -84,7 +84,7 @@ exports.join = function(uuid, cb){
         }
         game.players.push(player)
     }
-    cb(null, {players: game.players, czar: game.czar})
+    cb(null, {players: game.players})
 }
 
 exports.leave = function(id){
