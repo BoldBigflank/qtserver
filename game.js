@@ -228,7 +228,9 @@ exports.addAnswer = function(id, guess, cb){
             player.answers.push(correctIndex)
             game.players = _.sortBy(game.players, function(player){return -1 *  player.answers.length;});
 
-            if(answers.length===game.answered.length) exports.setState('ended') // End the game when all have been guessed
+            if(answers.length===game.answered.length) exports.setState('ended', function(err, res){
+                
+            }) // End the game when all have been guessed
         }
 
     } else {
