@@ -108,8 +108,6 @@ newRound = function(cb){
     cb()
 }
 
-// *** TODO: change the state and fire the event when the time is right ***
-
 exports.join = function(uuid, cb){
     if(uuid === undefined) {
         cb("UUID not found")
