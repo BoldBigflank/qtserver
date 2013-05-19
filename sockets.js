@@ -19,7 +19,10 @@ module.exports.listen = function(app){
         socket.set('uuid', uuid)
         game.join(uuid, function(err, res){
           if (err) { socket.emit("alert", err) }
-          else{ io.sockets.emit("game", res ) }
+          else{ 
+              socket.emit('game', game.getGame() )
+              io.sockets.emit("game", res ) 
+          }
         })
         cb(uuid)
       })

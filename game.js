@@ -164,15 +164,17 @@ exports.addAnswer = function(id, guess, cb){
     if(correctAnswer){
         var correctIndex = _.indexOf(answers, correctAnswer)
         // If it's in the answered array
+        // TODO UPDATE
         if(_.contains(game.answered, correctIndex)){
             // error 'already found'
             cb("This answer was already found")
+            return;
         } else {
             // Add to answered array
             var answerObject = {
                 index:correctIndex,
                 text:correctAnswer,
-                time: new Date().getTime()
+                time: new Date().getTime() - game.begin
             }
             game.answered.push(answerObject);
 
@@ -184,7 +186,7 @@ exports.addAnswer = function(id, guess, cb){
     } else {
         // error 'incorrect answer'
         cb(guess + " is incorrect.")
-
+        return;
     }
     return cb(null, { answers: game.answered, players: game.players, state: game.state })
 }
