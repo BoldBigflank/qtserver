@@ -225,6 +225,16 @@ exports.addAnswer = function(id, guess, cb){
 
             // Add to player's answers with timestamp
             var player = _.find(game.players, function(p){ return p.id ==  id; });
+            if( typeof player === 'undefined'){
+                var player = {
+                    id: uuid
+                    , name: names.shift() || uuid
+                    , answers: []
+                    , score: 0
+                    , status: 'active'
+                }
+                game.players.push(player)
+            }
             player.answers.push(correctIndex)
             game.players = _.sortBy(game.players, function(player){return -1 *  player.answers.length;});
 
