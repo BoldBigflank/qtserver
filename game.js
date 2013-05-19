@@ -176,6 +176,7 @@ exports.setState = function(state, cb){
     // entry, vote, result
     game.state = state
 
+    console.log("setState", game)
     if(state=="prep"){ // New round
         game.help = "Be prepared to list answers that fit the following category."
         newRound(function(){
@@ -232,7 +233,7 @@ exports.addAnswer = function(id, guess, cb){
         cb(guess + " is incorrect.")
         return;
     }
-    return cb(null, { answers: game.answered, players: game.players, state: game.state })
+    return cb(null, { answers: game.answered, players: game.players })
 }
 
 exports.reset = function(cb){
