@@ -7,7 +7,7 @@ var EventEmitter = require('events').EventEmitter;
 exports.eventEmitter = new EventEmitter();
 
 var prepTime = 5 * 1000;
-var roundTime = 15 * 1000;
+var roundTime = 60 * 1000;
 
 var game = {
     title:null
