@@ -73,7 +73,6 @@ newRound = function(cb){
     var files = fs.readdirSync('categories')
     files = _.difference(files, ['.', '..'])
     var path = files[Math.floor(Math.random()*files.length)]
-    path = 'chess.txt'
     var data = fs.readFileSync('categories/' + path)
     var dataArray = data.toString().split("\n");
         game.title = dataArray[0];
