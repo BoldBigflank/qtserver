@@ -221,7 +221,7 @@ exports.addAnswer = function(id, guess, cb){
 
             // Add to player's answers with timestamp
             var player = _.find(game.players, function(p){ return p.uuid ==  id; });
-            player.answered.push(correctIndex)
+            player.answers.push(correctIndex)
             game.players = _.sort(game.players, function(player){return -1 *  player.answered.length;});
         }
 
