@@ -6,7 +6,10 @@ module.exports.listen = function(app){
 
     io.sockets.on('connection', function (socket) {
       console.log("Connection", socket.id)
-
+      io.configure(function () { 
+        io.set("transports", ["xhr-polling"]); 
+        io.set("polling duration", 10); 
+      });
 
       socket.on('join', function(uuid){
         socket.set('uuid', uuid)
