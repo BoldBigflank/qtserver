@@ -58,7 +58,7 @@ newRound = function(cb){
     // Find the round's winner
     if(game.players.length > 0){
         var winningPlayer = _.max(game.players, function(player){
-            return player.answered.length
+            return player.answers.length
         })
 
         var winner = {
