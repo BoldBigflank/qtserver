@@ -1,6 +1,7 @@
 var socketio = require('socket.io')
 var game = require('./game.js')
 var availableUUID = 1;
+var events = require('events');
 
 module.exports.listen = function(app){
     io = socketio.listen(app)
@@ -80,5 +81,8 @@ module.exports.listen = function(app){
       })
     });
 
+    game.on('state', function(res) {
+      io.sockets.emit("game", res )
+    });
     return io
 }

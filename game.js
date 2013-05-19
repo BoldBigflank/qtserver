@@ -1,6 +1,13 @@
 var _ = require('underscore')
   , fs = require('fs')
-  , levenshtein = require('./levenshtein.js');
+  , levenshtein = require('./levenshtein.js')
+
+var EventEmitter = require('events').EventEmitter;
+
+module.exports = new EventEmitter();
+
+var prepTime = 5 * 1000;
+var roundTime = 5 * 1000;
 
 var game = {
     title:null
@@ -34,19 +41,20 @@ var init = function(cb){
         title = dataArray[0];
         answers = dataArray.splice(0,1);
         game.count = answers.length
-        // Shuffle
-        newRound()
+
+        fs.readFile('names.txt', function(err, data) {
+            if(err) throw err;
+            names = _.shuffle(data.toString().split("\n"));
+
+            newRound(function(){
+                console.log("Game initalized")
+            })
+        });
     });
 
-    fs.readFile('names.txt', function(err, data) {
-        if(err) throw err;
-        names = _.shuffle(data.toString().split("\n"));
-        // Shuffle
-        newRound()
-    });
 }
 
-newRound = function(callback){
+newRound = function(cb){
     // Remove the current entries from the players
     for(var index in game.players){
         var player = game.players[index]
@@ -56,14 +64,29 @@ newRound = function(callback){
 
     // Pick the beginning time
     var now = new Date().getTime(); // Milliseconds
-    var begin = now + 30000;
+    var begin = now + prepTime;
     game.begin = begin;
 
-    var end = begin + 60000;
+    var end = begin + roundTime;
     game.end = end;
 
     game.answers = []
-    game.state = "active"; // DEBUG: Make prep first in prod
+    game.state = "prep"; // DEBUG: Make prep first in prod
+    setTimeout(function(){
+        console.log("timer 1 ended")
+        setState('active', function(err, res){
+            if(!err)
+                module.exports.emit('state', res)
+        })
+    }, prepTime);
+    setTimeout(function(){
+        console.log("timer 2 ended")
+        setState('ended', function(err, res){
+            if(!err)
+                module.exports.emit('state', res)
+        })
+    }, prepTime + roundTime);
+    cb()
 }
 
 // *** TODO: change the state and fire the event when the time is right ***
@@ -129,29 +152,23 @@ exports.setName = function(id, name, cb){
     cb(null, { players: game.players })
 }
 
-exports.setState = function(id, state, cb){
+function setState(state, cb){
     // Only start new rounds when the last is done
     if(game.state != "ended" && state == "prep") return cb("Only start new rounds when the last is done")
-
-    // Only end the entry round when there are entries
-    if(game.state == "active" && state == "ended" && game.entries.length === 0) return cb("Must have at least one entry")
 
     // entry, vote, result
     game.state = state
 
     if(state=="prep"){ // New round
-        // Set the state
-        game.state = "prep"
-        game.answered = []
         game.help = "Be prepared to list answers that fit the following category."
     }
     else if (state == "active")
         game.help = "List items that fit the category."
     else if (state == "ended")
         game.help = "The round has ended.  Click 'New Round' to begin."
-    else
+    else 
         game.help = "";
-    return cb(null, { state: game.state })
+    cb(null, game)
 }
 
 exports.addAnswer = function(id, guess, cb){
@@ -164,8 +181,7 @@ exports.addAnswer = function(id, guess, cb){
     if(correctAnswer){
         var correctIndex = _.indexOf(answers, correctAnswer)
         // If it's in the answered array
-        // TODO UPDATE
-        if(_.contains(game.answered, correctIndex)){
+        if(_.where(game.answered, {index:correctIndex}).length > 0){
             // error 'already found'
             cb("This answer was already found")
             return;
@@ -197,6 +213,7 @@ exports.reset = function(cb){
     cb(null, game)
 }
 
+// Not used
 exports.endRound = function(id, vote, cb){
     // Set the winner
     var winningPlayer = _.max(game.players, function(player){
@@ -210,8 +227,8 @@ exports.endRound = function(id, vote, cb){
     }
     game.winner = winner
     // Start new round
-    newRound()
-    cb(null, game)
+    // newRound()
+    this.emit(null, {winner:winner})
 }
 
 init()
