@@ -1,4 +1,5 @@
-var socket = io.connect('http://qtserver.herokuapp.com');
+// var socket = io.connect('http://qtserver.herokuapp.com');
+var socket = io.connect();
 
 (function($, undefined){
   $(document).ready(function(){
@@ -282,7 +283,7 @@ var Leaderboard = function(){
         $('<tr>').append(
           $('<td>').html(i + 1),
           $('<td>').html(name),
-          $('<td>').append( $('<span>', {'class': 'badge ' + this.get_badge_class(i)}).append(users.user_array[i].answers.length) )
+          $('<td>').append( $('<span>', {'class': 'badge ' + this.get_badge_class(i)}).append(users.user_array[i].score) )
         )
       );
     }

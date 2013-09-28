@@ -6,12 +6,12 @@ var EventEmitter = require('events').EventEmitter;
 
 exports.eventEmitter = new EventEmitter();
 
-var prepTime = 5 * 1000;
-var roundTime = 60 * 1000;
+var prepTime = 2 * 1000;
+var roundTime = 10 * 1000;
 
 var game = {
     title:null
-    , answered:[]
+    , round:0
     , state:"prep"
     , players:[]
     , begin:null
@@ -28,10 +28,10 @@ var questions
 var init = function(cb){
     game = {
         title:null
+        , round:0
         , correctAnswer:null
         , answers:[]
-        , answered:[]
-
+        
         , state:"ended"
         , players:[]
         , begin:null
@@ -56,13 +56,13 @@ newRound = function(cb){
     // Find the round's winner
     if(game.players.length > 0){
         var winningPlayer = _.max(game.players, function(player){
-            return player.answers.length
+            return player.score
         })
         if(winningPlayer){
             var winner = {
                 name: winningPlayer.name
                 , title: game.title
-                , score: winningPlayer.answers.length
+                , score: winningPlayer.score
                 , id: winningPlayer.id
             }
             game.winner = winner
@@ -77,6 +77,7 @@ newRound = function(cb){
 
     var questionArray = questions.shift().split("|");
     game.title = questionArray.shift();
+    game.round++ ;
     game.correctAnswer = questionArray[0];
     game.answers = _.shuffle(questionArray);
 
@@ -99,7 +100,6 @@ newRound = function(cb){
     var end = begin + roundTime;
     game.end = end;
 
-    game.answered = []
     // game.title = ""
 
     game.state = "prep"; // DEBUG: Make prep first in prod
@@ -131,7 +131,7 @@ exports.join = function(uuid, cb){
         var player = {
             id: uuid
             , name: names.shift() || uuid
-            , answer: []
+            , answer: null
             , answerScore: null
             , score: 0
             , status: 'active'
@@ -153,7 +153,7 @@ exports.getAnswers = function(){ return answers }
 exports.getGame = function(){ return game }
 
 exports.getScores = function(){
-    return _.map(game.players, function(val, key){ return { id:val.id, name:val.name, score:val.answers.length }; })
+    return _.map(game.players, function(val, key){ return { id:val.id, name:val.name, score:val.score }; })
 }
 
 exports.getPlayers = function(){ return game.players }
@@ -164,14 +164,16 @@ exports.getState = function(){ return game.state }
 
 exports.getTitle = function(){ return game.title }
 
+exports.getRound = function(){ return game.round }
+
+
 exports.getWinner = function(){ return game.winner }
 
 exports.getScoreboard = function(){
     return {
         title: game.title
-        , scores: _.map(game.players, function(val, key){ return { id:val.id, name:val.name, score:val.answers.length }; })
+        , scores: _.map(game.players, function(val, key){ return { id:val.id, name:val.name, score:val.score }; })
         , players: game.players.length
-        , answered: game.answered.length
         , answers: answers.length
     }
 
@@ -202,6 +204,12 @@ exports.setState = function(state, cb){
         cb(null, game)
     }
     else if (state == "ended"){
+        
+        // Apply the scores to the winners
+        _.each(game.players, function(player){
+            if(player.answer = game.correctAnswer) player.score += player.answerScore;
+        })
+
         game.help = "The round has ended.  Click 'New Round' to begin."
         cb(null, game)
     }
@@ -222,7 +230,7 @@ exports.addAnswer = function(id, guess, cb){
     
     // Get the time difference for end
     var now = new Date().getTime();
-    var guessScore = (game.end - now )/ 10;
+    var guessScore = parseInt((game.end - now )/ 10);
     var player = _.find(game.players, function(p){ return p.id ==  id; });
     if( typeof player === 'undefined'){
         var player = {
@@ -237,7 +245,7 @@ exports.addAnswer = function(id, guess, cb){
     }
     player.answer = guess
     player.answerScore = guessScore
-    return cb("You have guessed " + guess + " for " + score + " points.", {players:game.players})
+    return cb("You have guessed " + guess + " for " + guessScore + " points.", {players:game.players})
 
     // If it's in the answers array and not in the answered array
     // if(correctAnswer){
