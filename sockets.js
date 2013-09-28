@@ -49,7 +49,7 @@ module.exports.listen = function(app){
         socket.get('uuid', function(err, uuid){
           game.addAnswer(uuid, answer, function(err, res){
             if (err) { socket.emit("alert", err) }
-            else{ io.sockets.emit("game", res ) }
+            if(res) { io.sockets.emit("game", res ) }
           })  
         })
         

@@ -22,11 +22,16 @@ var game = {
 } // prep, active, ended
 
 var answers = []
+var names
+var questions
 
 var init = function(cb){
     game = {
         title:null
+        , correctAnswer:null
+        , answers:[]
         , answered:[]
+
         , state:"ended"
         , players:[]
         , begin:null
@@ -38,10 +43,11 @@ var init = function(cb){
     fs.readFile('names.txt', function(err, data) {
         if(err) throw err;
         names = _.shuffle(data.toString().split("\n"));
+    });
 
-        // newRound(function(){
-        //     console.log("Game initalized", game)
-        // })
+    fs.readFile('questions.txt', function(err, data) {
+        if(err) throw err;
+        questions = _.shuffle(data.toString().split("\n"));
     });
 
 }
@@ -69,15 +75,21 @@ newRound = function(cb){
         game.players[index] = player
     }
 
-    // Load a new file
-    var files = fs.readdirSync('categories')
-    files = _.difference(files, ['.', '..'])
-    var path = files[Math.floor(Math.random()*files.length)]
-    var data = fs.readFileSync('categories/' + path)
-    var dataArray = data.toString().split("\n");
-        game.title = dataArray[0];
-        answers = dataArray.splice(1);
-        game.count = answers.length
+    var questionArray = questions.shift().split("|");
+    game.title = questionArray.shift();
+    game.correctAnswer = questionArray[0];
+    game.answers = _.shuffle(questionArray);
+
+
+    // // Load a new file
+    // var files = fs.readdirSync('categories')
+    // files = _.difference(files, ['.', '..'])
+    // var path = files[Math.floor(Math.random()*files.length)]
+    // var data = fs.readFileSync('categories/' + path)
+    // var dataArray = data.toString().split("\n");
+    //     game.title = dataArray[0];
+    //     answers = dataArray.splice(1);
+    //     game.count = answers.length
 
     // Pick the beginning time
     var now = new Date().getTime(); // Milliseconds
@@ -119,7 +131,8 @@ exports.join = function(uuid, cb){
         var player = {
             id: uuid
             , name: names.shift() || uuid
-            , answers: []
+            , answer: []
+            , answerScore: null
             , score: 0
             , status: 'active'
         }
@@ -201,54 +214,76 @@ exports.setState = function(state, cb){
 exports.addAnswer = function(id, guess, cb){
     if(game.state != "active") return cb("Not accepting answers");
 
-    var correctAnswer = _.find(answers, function(answer){
-        return levenshtein.distance(guess, answer) < 2;
-    })
-    // If it's in the answers array and not in the answered array
-    if(correctAnswer){
-        var correctIndex = _.indexOf(answers, correctAnswer)
-        // If it's in the answered array
-        if(_.where(game.answered, {index:correctIndex}).length > 0){
-            // error 'already found'
-            cb("This answer was already found")
-            return;
-        } else {
-            // Add to answered array
-            var ts = (new Date().getTime()) - game.begin;
-            var answerObject = {
-                index:correctIndex,
-                text:correctAnswer,
-                time: ts
-            }
-            
-            game.answered.push(answerObject);
+    var correctAnswer = (guess == game.correctAnswer)
 
-            // Add to player's answers with timestamp
-            var player = _.find(game.players, function(p){ return p.id ==  id; });
-            if( typeof player === 'undefined'){
-                var player = {
-                    id: uuid
-                    , name: names.shift() || uuid
-                    , answers: []
-                    , score: 0
-                    , status: 'active'
-                }
-                game.players.push(player)
-            }
-            player.answers.push(correctIndex)
-            game.players = _.sortBy(game.players, function(player){return -1 *  player.answers.length;});
-
-            if(answers.length===game.answered.length) exports.setState('ended', function(err, res){
-                exports.eventEmitter.emit('state', res)
-            }) // End the game when all have been guessed
+    // var correctAnswer = _.find(answers, function(answer){
+    //     return levenshtein.distance(guess, answer) < 2;
+    // })
+    
+    // Get the time difference for end
+    var now = new Date().getTime();
+    var guessScore = (game.end - now )/ 10;
+    var player = _.find(game.players, function(p){ return p.id ==  id; });
+    if( typeof player === 'undefined'){
+        var player = {
+            id: uuid
+            , name: names.shift() || uuid
+            , answer: null
+            , answerScore: null
+            , score: 0
+            , status: 'active'
         }
-
-    } else {
-        // error 'incorrect answer'
-        cb(guess + " is incorrect.")
-        return;
+        game.players.push(player)
     }
-    return cb(null, { answers: game.answered, players: game.players })
+    player.answer = guess
+    player.answerScore = guessScore
+    return cb("You have guessed " + guess + " for " + score + " points.", {players:game.players})
+
+    // If it's in the answers array and not in the answered array
+    // if(correctAnswer){
+    //     var correctIndex = _.indexOf(answers, correctAnswer)
+    //     // If it's in the answered array
+    //     if(_.where(game.answered, {index:correctIndex}).length > 0){
+    //         // error 'already found'
+    //         cb("This answer was already found")
+    //         return;
+    //     } else {
+    //         // Add to answered array
+    //         var ts = (new Date().getTime()) - game.begin;
+    //         var answerObject = {
+    //             index:correctIndex,
+    //             text:correctAnswer,
+    //             time: ts
+    //         }
+            
+    //         game.answered.push(answerObject);
+
+    //         // Add to player's answers with timestamp
+    //         var player = _.find(game.players, function(p){ return p.id ==  id; });
+    //         if( typeof player === 'undefined'){
+    //             var player = {
+    //                 id: uuid
+    //                 , name: names.shift() || uuid
+    //                 , answers: []
+    //                 , score: 0
+    //                 , status: 'active'
+    //             }
+    //             game.players.push(player)
+    //         }
+    //         player.answers.push(correctIndex)
+    //         game.players = _.sortBy(game.players, function(player){return -1 *  player.answers.length;});
+
+    //         if(answers.length===game.answered.length) exports.setState('ended', function(err, res){
+    //             exports.eventEmitter.emit('state', res)
+    //         }) // End the game when all have been guessed
+    //     }
+
+    // } else {
+    //     // error 'incorrect answer'
+    //     cb(guess + " is incorrect.")
+    //     return;
+    // }
+    // return cb(null, { answers: game.answered, players: game.players })
 }
 
 exports.reset = function(cb){
