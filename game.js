@@ -71,6 +71,8 @@ newRound = function(cb){
     // Remove the current entries from the players
     for(var index in game.players){
         var player = game.players[index]
+        player.answer = null;
+        player.answerScore = 0;
         game.players[index] = player
     }
 
@@ -206,7 +208,7 @@ exports.setState = function(state, cb){
         
         // Apply the scores to the winners
         _.each(game.players, function(player){
-            if(player.answer = game.correctAnswer) player.score += player.answerScore;
+            if(player.answer == game.correctAnswer) player.score += player.answerScore;
         })
 
         game.players = _.sortBy(game.players, function(player){return -1 *  player.score;});

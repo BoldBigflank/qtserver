@@ -5,9 +5,17 @@ var game = {};
 
 var Player = React.createClass({
 	render: function(){
+		var classes=""
+		if(this.props.gameState == "active" && this.props.player.answer != null)
+			classes="warning"
+		if(this.props.gameState == "ended" && this.props.player.answer )
+			if(this.props.player.answer == this.props.correctAnswer)
+				classes="success";
+			else
+				classes="danger";
 		return (
-			<tr>
-				<td></td>
+			<tr className={classes}>
+				<td>{this.props.count}</td>
 				<td>{this.props.player.name}</td>
 				<td>{this.props.player.score}</td>
 			</tr>
@@ -46,11 +54,18 @@ var GameComponent = React.createClass({
 		});
 	},
 	render: function(){
+		var self = this
+		var count = 0
 		var players = this.state.players.map(function(player) {
-			return (<Player player={player} />);
+			return (<Player 
+				player={player} 
+				gameState={self.state.state} 
+				correctAnswer={self.state.correctAnswer} 
+				count={++count}/>);
 		})
 
-		var next = (this.state.state == 'ended') ? <button id="begin-btn" class="btn btn-large btn-primary">Next</button> : <div class="div-info alert alert-info">This question is worth {percent*10} points.</div>;
+		var next = (this.state.state == 'ended') ? <button id="begin-btn" class="btn btn-large btn-primary">Next</button> : <button id="begin-btn" class="btn btn-large btn-primary" style={{display:'none'}}>Next</button>;
+		var info = (this.state.state != 'ended') ? <div class="div-info alert alert-info">This question is worth {percent*10} points.</div> : "";
 		var answer = (this.state.state == 'ended') ? <div class="div-info alert alert-info"> {this.state.correctAnswer}</div> : "";
 		var alert =  (this.state.alert) ? <div class="alert alert-dismissable alert-danger"> {this.state.alert}</div> : "";
 		var timestamp = new Date().getTime();
@@ -62,6 +77,8 @@ var GameComponent = React.createClass({
 			percent = 0;
 		}
 		var barStyle = {width:percent + "%"};
+		var hideAnswers = (this.state.state != 'active') ? {display:'none'}:{};
+
 		return (
 			<div class="row">
 				<div id="leaderboard_container" class="container col-md-3">
@@ -83,9 +100,6 @@ var GameComponent = React.createClass({
 					<div class="progress progress-striped" id="timer">
 					  	<div class="progress-bar progress-bar-info" style={barStyle}></div>
 					</div>
-					<div class="timebar bar" >
-				    	<i class="glyphicon-time glyphicon-white"></i>{percent*10}
-				  	</div>
 					
 					<div class="jumbotron">
 						<h1>
@@ -97,9 +111,10 @@ var GameComponent = React.createClass({
 						{answer}
 					</div>
 					{next}
+					{info}
 					{alert}
 					
-					<div class="answers">
+					<div class="answers" style={hideAnswers}>
 						<a class="btn btn-block btn-large btn-primary answer-btn">{this.state.answers[0]}</a>
 						<a class="btn btn-block btn-large btn-danger answer-btn">{this.state.answers[1]}</a>
 						<a class="btn btn-block btn-large btn-warning answer-btn">{this.state.answers[2]}</a>
