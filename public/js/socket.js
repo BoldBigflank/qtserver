@@ -6,11 +6,11 @@ var game = {};
 var Player = React.createClass({
 	render: function(){
 		return (
-			<div>
-				<p></p>
-				<p>{this.props.player.name}</p>
-				<p>{this.props.player.score}</p>
-			</div>
+			<tr>
+				<td></td>
+				<td>{this.props.player.name}</td>
+				<td>{this.props.player.score}</td>
+			</tr>
 		)
 	}
 })
@@ -63,33 +63,49 @@ var GameComponent = React.createClass({
 		}
 		var barStyle = {width:percent + "%"};
 		return (
-			<div>
-				<div class="progress progress-striped" id="timer">
-				  	<div class="progress-bar progress-bar-info" style={barStyle}></div>
+			<div class="row">
+				<div id="leaderboard_container" class="container col-md-3">
+				  <span><h4>Leaderboard</h4></span>
+				  <table class="leaders table table-striped">
+				    <thead>
+				      <tr>
+				        <th>#</th>
+				        <th>Name:</th>
+				        <th>Score</th>
+				      </tr>
+				    </thead>
+				    <tbody>
+				    {players}
+				    </tbody>
+				  </table>
 				</div>
-				<div class="timebar bar" >
+				<div class="col-md-9">
+					<div class="progress progress-striped" id="timer">
+					  	<div class="progress-bar progress-bar-info" style={barStyle}></div>
+					</div>
+					<div class="timebar bar" >
 				    	<i class="glyphicon-time glyphicon-white"></i>{percent*10}
 				  	</div>
-				
-				<div class="jumbotron">
-					<h1>
-						Question {this.state.round}
-					</h1>
-					<p class="title">
-						{this.state.title}
-					</p>
-					{answer}
+					
+					<div class="jumbotron">
+						<h1>
+							Question {this.state.round}
+						</h1>
+						<p class="title">
+							{this.state.title}
+						</p>
+						{answer}
+					</div>
+					{next}
+					{alert}
+					
+					<div class="answers">
+						<a class="btn btn-block btn-large btn-primary answer-btn">{this.state.answers[0]}</a>
+						<a class="btn btn-block btn-large btn-danger answer-btn">{this.state.answers[1]}</a>
+						<a class="btn btn-block btn-large btn-warning answer-btn">{this.state.answers[2]}</a>
+						<a class="btn btn-block btn-large btn-success answer-btn">{this.state.answers[3]}</a>
+					</div>
 				</div>
-				{next}
-				{alert}
-				
-				<div class="answers">
-					<a class="btn btn-block btn-large btn-primary answer-btn">{this.state.answers[0]}</a>
-					<a class="btn btn-block btn-large btn-danger answer-btn">{this.state.answers[1]}</a>
-					<a class="btn btn-block btn-large btn-warning answer-btn">{this.state.answers[2]}</a>
-					<a class="btn btn-block btn-large btn-success answer-btn">{this.state.answers[3]}</a>
-				</div>
-				{players}
 			</div>
         );
 	}

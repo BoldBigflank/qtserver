@@ -71,7 +71,6 @@ newRound = function(cb){
     // Remove the current entries from the players
     for(var index in game.players){
         var player = game.players[index]
-        player.answers = []
         game.players[index] = player
     }
 
@@ -210,6 +209,7 @@ exports.setState = function(state, cb){
             if(player.answer = game.correctAnswer) player.score += player.answerScore;
         })
 
+        game.players = _.sortBy(game.players, function(player){return -1 *  player.score;});
         // game.help = "The round has ended.  Click 'New Round' to begin."
         cb(null, game)
     }
