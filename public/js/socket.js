@@ -47,7 +47,6 @@ var GameComponent = React.createClass({
 	},
 	render: function(){
 		var players = this.state.players.map(function(player) {
-			console.log(player);
 			return (<Player player={player} />);
 		})
 
