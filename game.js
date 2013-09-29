@@ -76,6 +76,14 @@ newRound = function(cb){
         game.players[index] = player
     }
 
+    // Refresh when out of questions
+    if(questions.length<1){
+        fs.readFile('questions.txt', function(err, data) {
+            if(err) throw err;
+            questions = _.shuffle(data.toString().split("\n"));
+        });
+    }
+    
     var questionArray = questions.shift().split("|");
     game.title = questionArray.shift();
     game.round++ ;

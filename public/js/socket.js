@@ -81,7 +81,7 @@ var GameComponent = React.createClass({
 
 		return (
 			<div class="row">
-				<div id="leaderboard_container" class="container col-md-3">
+				<div id="leaderboard_container" class="container col-md-3 hidden-sm hidden-xs">
 				  <span><h4>Leaderboard</h4></span>
 				  <table class="leaders table table-striped">
 				    <thead>
