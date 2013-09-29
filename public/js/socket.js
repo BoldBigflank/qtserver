@@ -3,6 +3,19 @@ var socket = io.connect();
 console.log("socket is defined");
 var game = {};
 
+var Player = React.createClass({
+	render: function(){
+		return (
+			<div>
+				<p></p>
+				<p>{this.props.player.name}</p>
+				<p>{this.props.player.score}</p>
+			</div>
+		)
+	}
+})
+
+
 var GameComponent = React.createClass({
 	getInitialState: function(){
 		return {
@@ -17,6 +30,7 @@ var GameComponent = React.createClass({
 	        , end:1
 	        , winner:{}
 	        , count:null
+	        , alert:null
     	}
 	},
 	componentDidMount: function(){
@@ -25,14 +39,21 @@ var GameComponent = React.createClass({
 			console.log("game", data);
 			self.setState(data);
 		})
+
+		socket.on('alert', function (data) {
+			console.log("socket alert", data)
+			self.state.alert = data
+		});
 	},
 	render: function(){
-		// var items = this.state.answers.map(function(answer) {
-		// 	return <Answer answer={answer}/>
-		// })
-		// return <span class="round">{this.state.round}</span>;
+		var players = this.state.players.map(function(player) {
+			console.log(player);
+			return (<Player player={player} />);
+		})
+
 		var next = (this.state.state == 'ended') ? <button id="begin-btn" class="btn btn-large btn-primary">Next</button> : <div class="div-info alert alert-info">This question is worth {percent*10} points.</div>;
 		var answer = (this.state.state == 'ended') ? <div class="div-info alert alert-info"> {this.state.correctAnswer}</div> : "";
+		var alert =  (this.state.alert) ? <div class="alert alert-dismissable alert-danger"> {this.state.alert}</div> : "";
 		var timestamp = new Date().getTime();
 		var timestamp_diff = timestamp - this.state.now;
 		if(timestamp < this.state.end){
@@ -61,6 +82,7 @@ var GameComponent = React.createClass({
 					{answer}
 				</div>
 				{next}
+				{alert}
 				
 				<div class="answers">
 					<a class="btn btn-block btn-large btn-primary answer-btn">{this.state.answers[0]}</a>
@@ -68,23 +90,20 @@ var GameComponent = React.createClass({
 					<a class="btn btn-block btn-large btn-warning answer-btn">{this.state.answers[2]}</a>
 					<a class="btn btn-block btn-large btn-success answer-btn">{this.state.answers[3]}</a>
 				</div>
+				{players}
 			</div>
         );
 	}
 });
 
 // var Answer = React.createClass({
-// 	onClick: function(e){
-// 		e.stopPropagation();
-// 		socket.emit('answer', guess, function(message){
-// 			// update a helper div with this information
-
-// 		})
-// 	},
 // 	render: function(){
-// 		return <a onClick={this.onClick} class="btn btn-block btn-large btn-primary answer">{this.props.answer}</a>
+// 		return <a class="btn btn-block btn-large btn-primary answer">{this.props.answer}</a>
 // 	}
 // });
+
+
+// The clock
 setInterval(function() {
         React.renderComponent(
           GameComponent({timestamp: new Date().getTime()}),
@@ -96,75 +115,12 @@ setInterval(function() {
   $(document).ready(function(){
   	React.renderComponent(<GameComponent />, $("#question-panel")[0]);
   	console.log("preparing for sockets");
-    // var users = new Users();
-    // var leaderboard = new Leaderboard();
-    // var answers = new Answers();
-    // var user_info = new UserInfo();
-    // var countdown = new Countdown();
-    // var notify = new Notify();
-
-    socket.on('answers', function (data) {
-      //console.log('answers array', data);
-      var tiles = $('.tiles .tile');
-      for(var i = 0; i < data.length; i++){
-        if(typeof tiles.eq(i).data('flipped') == 'undefined'){
-          tiles.eq(i).html('<span class="answer_grey">' + data[i] + '</span>');
-        }
-      }
-    });
-
-    // socket.on('game', function (data) {
-
-    // 	console.log("socket game", game)
-    // 	game = data
-    	
-    // 	// Round number
-    // 	$(".round").text(game.round)
-
-    // 	// The timer will go to (end-now)/(begin-end)
-    // 	var percent = (game.end - game.now) / (game.begin-game.end) * 100;
-    // 	$(".timebar").attr("style", "width: " + percent + "%");
-    // 	// TODO: Animate this
-
-    // 	if(game.state == "ended") $("#begin-btn").show()
-    // 	else $("#begin-btn").hide()
-
-    // 	$(".title").text(game.title)
-
-    // 	$($(".answer")[0]).text(game.answers[0]).attr("answer", game.answers[0])
-    // 	$($(".answer")[1]).text(game.answers[1]).attr("answer", game.answers[1])
-    // 	$($(".answer")[2]).text(game.answers[2]).attr("answer", game.answers[2])
-    // 	$($(".answer")[3]).text(game.answers[3]).attr("answer", game.answers[3])
-
-    // });
-
+    
     socket.emit('join', function(playerObj){
     	console.log("emitted join", playerObj)
     	$(".username").text(playerObj.name)
     });
-
-    socket.on('alert', function (data) {
-    	console.log("socket alert", data)
-    });
-
-    //Begin game
-    $(document).on('click', '#begin-btn', function(){
-      socket.emit('state', 'prep', function(err, res){
-        // console.log('sent answer');
-        // console.log(res);
-        // console.log(err);
-      });
-    });
-
-    $('#info_bar .username').click(function(){
-      $('#username_modal').modal();
-    });
-    //Answer submit
-    // $('#answer-input').keypress(function(e){
-    //   if(e.which === 13){
-    //     console.log('return');
-    //   }
-    // });
+    
     $('.answer-btn').click(function(){
 		var val = $(this).text();
 		console.log("answering", val)
@@ -182,8 +138,6 @@ setInterval(function() {
     	$('.username').text(val)
     	if(val !== ''){
         	socket.emit('name', val, function(err, res){
-
-        	// console.log(res);
         	});
       	}
     });

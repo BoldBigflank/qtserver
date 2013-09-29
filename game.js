@@ -194,13 +194,13 @@ exports.setState = function(state, cb){
     game.state = state
     game.now = new Date().getTime()
     if(state=="prep"){ // New round
-        game.help = "Be prepared to list answers that fit the following category."
+        // game.help = "Be prepared to list answers that fit the following category."
         newRound(function(){
             cb(null, game)
         });
     }
     else if (state == "active"){
-        game.help = "List items that fit the category."
+        // game.help = "List items that fit the category."
         cb(null, game)
     }
     else if (state == "ended"){
@@ -210,11 +210,11 @@ exports.setState = function(state, cb){
             if(player.answer = game.correctAnswer) player.score += player.answerScore;
         })
 
-        game.help = "The round has ended.  Click 'New Round' to begin."
+        // game.help = "The round has ended.  Click 'New Round' to begin."
         cb(null, game)
     }
     else{
-        game.help = "";
+        // game.help = "";
         cb(null, game)
     }
 }
