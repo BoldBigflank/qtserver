@@ -1,5 +1,5 @@
 /** @jsx React.DOM */
-var socket = io.connect();
+var socket = io.connect('http://qtserver.herokuapp.com');
 console.log("socket is defined");
 var game = {};
 
