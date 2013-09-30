@@ -67,6 +67,8 @@ var GameComponent = React.createClass({
 		var next = (this.state.state == 'ended') ? <button id="begin-btn" class="btn btn-large btn-primary">Next</button> : <button id="begin-btn" class="btn btn-large btn-primary" style={{display:'none'}}>Next</button>;
 		var info = (this.state.state != 'ended') ? <div class="div-info alert alert-info">This question is worth {percent*10} points.</div> : "";
 		var answer = (this.state.state == 'ended') ? <div class="div-info alert alert-info"> {this.state.correctAnswer}</div> : "";
+
+		if(this.state.state == 'prep') this.state.alert = null;
 		var alert =  (this.state.alert) ? <div class="alert alert-dismissable alert-danger"> {this.state.alert}</div> : "";
 		var timestamp = new Date().getTime();
 		var timestamp_diff = timestamp - this.state.now;
@@ -97,10 +99,6 @@ var GameComponent = React.createClass({
 				  </table>
 				</div>
 				<div class="col-md-9">
-					<div class="progress progress-striped" id="timer">
-					  	<div class="progress-bar progress-bar-info" style={barStyle}></div>
-					</div>
-					
 					<div class="jumbotron">
 						<h1>
 							Question {this.state.round}
@@ -108,9 +106,14 @@ var GameComponent = React.createClass({
 						<p class="title">
 							{this.state.title}
 						</p>
+						<div class="progress progress-striped" id="timer">
+						  	<div class="progress-bar progress-bar-info" style={barStyle}></div>
+						</div>
 						{answer}
+						{next}
 					</div>
-					{next}
+					
+					
 					{info}
 					{alert}
 					
