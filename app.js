@@ -36,7 +36,7 @@ app.configure('production', function(){
 //     res.redirect('http://dev.bold-it.com/quiztime'+req.url)
 // })
   app.get('/', function(req, res){
-    fs.readFile('public/index2.html', function(err, page) {
+    fs.readFile('public/index.html', function(err, page) {
             res.writeHead(200, {'Content-Type': 'text/html'});
             res.write(page);
             res.end();

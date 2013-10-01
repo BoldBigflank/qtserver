@@ -1,96 +1,60 @@
 <!DOCTYPE html>
-<html>
-<head>
-	<title>Qu.izTi.me</title>
-	<script type="text/javascript" src="assets/js/jquery-1.9.1.min.js"></script>
-	<script src="/socket.io/socket.io.js"></script>
-	<script type="text/javascript" src="socket.js"></script>
-	<script type="text/javascript" src="assets/js/jquery.flip.min.js"></script>
-	<script type="text/javascript" src="assets/js/jquery.countdown.min.js"></script>
-	<script src="bootstrap/js/bootstrap.min.js"></script>
-	<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
-	<link href="assets/css/style.css" rel="stylesheet" media="screen">
+<html lang="en">
+  
+  <head>
+    <meta charset="utf-8">
+    <title>
+      QuizTime
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Le styles -->
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" ></script>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    
+    <!-- The core React library -->
+    <script src="http://fb.me/react-0.4.1.min.js"></script>
+    <!-- In-browser JSX transformer, remove when pre-compiling JSX. -->
+    <script src="http://fb.me/JSXTransformer-0.4.1.js"></script>
+  
+    <script type="text/jsx" src="js/socket.js"></script>
+    
+    <link href="css/page.css" rel="stylesheet">
 </head>
-<body>
-	<script>
-	(function($, undefined){
-		$(document).ready(function(){
-			// setInterval(function(){
-			// 	var rand = Math.floor(Math.random() * $('.tile').length);
-			// 	//console.log(rand);
-			// 	$('.tile').eq(rand).flip({
-			// 		direction: 'bt',
-			// 		content: 'complete',
-			// 		color: '#242E39',
-			// 		speed: 200
-			// 	});
-			// }, 1000);
-
-			
-			//console.log(leaderboard);
-			
-		});
-
-		
-
-	})(jQuery);
-	</script>
-	<div id="content" class="row-fluid">
-		<div id="tile_container" class="container span7 offset1" style="">
-			<div class="page-header">
-				<h1 id="question">Qu.izTi.me</h1>
-			</div>
-			<ul class="tiles inline" class="span7">
-			</ul>
-			<div class="page-header" style='clear: left;'></div>
-			<div id="answer_container" class="offset">
-				<div class="countdown"></div>
-				<div id="answer">
-					<input id="answer-input" class="input-xxlarge" type="text" placeholder="Your answer" onkeydown="if (event.keyCode == 13) document.getElementById('answer-btn').click()">
-					<button id="answer-btn" class="btn btn-primary">Answer</button>
-				</div>
-			</div>
-		</div>
-		<div id="leaderboard_container" class="container span3" style="">
-			<span><h4>Leaderboard</h4></span>
-			<table class="leaders table table-striped">
-				<thead>
-					<tr>
-						<th>#</th>
-						<th>Name:</th>
-						<th>Score</th>
-					</tr>
-				</thead>
-				<tbody>
-				</tbody>
-			</table>
-		</div>
-		<div id="username_modal" class="modal hide fade">
-		  <div class="modal-header">
-		    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		    <h3>Change name</h3>
-		  </div>
-		  <div class="modal-body">
-		    <div class="username">
-				<input type="text" class="input-xlarge" id="username-input">
-			</div>
-		  </div>
-		  <div class="modal-footer">
-		    <a href="#" data-toggle="modal" data-target="#username_modal" class="btn">Close</a>
-		    <a href="#" id="update-btn" data-toggle="modal" data-target="#username_modal" class="btn btn-primary">Save changes</a>
-		  </div>
-		</div>
-	</div>
-	<div id="info_bar">
-		<span class="username"><h3 class="username_val"></h3></span>
-		<span class="score"><h4>Score: <span class="score_val">0</span></h4></span>
-		<span class="rank"><h4>Rank: #<span class="rank_val">?</span></h4></span>
-		<div id="notify"></div>
-	</div>
-	<script type="text/javascript" src="cordova-2.4.0.js"></script>
-	<script type="text/javascript" src="js/index.js"></script>
-	<script type="text/javascript">
-        app.initialize();
+  
+  <body>
+    <div class="navbar navbar-default navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+          <a class="navbar-brand" href="#">QuizTime</a>
+            <p class="navbar-text pull-right">
+              Your name is
+              <a href="#" class="username update-name navbar-link">Username</a>
+            </p>
+          <!--/.navbar-collapse -->
+        
+      </div>
+    </div>
+    <div class="container-fluid">
+      <!--/row-->
+      <div id="question-panel" class="row-fluid">
+        
+      </div>
+      <hr>
+      <footer>
+        <p>
+          © Alex Swan 2013
+        </p>
+      </footer>
+    </div>
+    <!--/.fluid-container-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"
+    >
     </script>
-</body>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/3.0.0/js/bootstrap.min.js"
+    >
+    </script>
+  </body>
+
 </html>
